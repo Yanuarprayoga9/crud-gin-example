@@ -31,20 +31,26 @@ func NewUserService(repo repository.UserRepository) UserService {
 	}
 }
 
-// CreateUser validates the request, transforms it, and calls the repository
+// CreateUser validates the request, hashes the password, and calls the repository
 func (s *userService) CreateUser(request web.UserCreateRequest) (web.UserResponse, error) {
 	// Validate the request
 	if err := s.validator.ValidateStruct(request); err != nil {
 		return web.UserResponse{}, err
 	}
 
+	// Hash the password
+	hashedPassword, err := utils.HashPassword(request.Password)
+	if err != nil {
+		return web.UserResponse{}, err
+	}
+
 	// Transform and create the user
 	user := &domain.User{
 		Username: request.Username,
-		Password: request.Password, // Make sure to hash the password here
+		Password: hashedPassword, // Store the hashed password
 	}
 
-	err := s.repo.CreateUser(user)
+	err = s.repo.CreateUser(user)
 	if err != nil {
 		return web.UserResponse{}, err
 	}
@@ -89,7 +95,7 @@ func (s *userService) GetUserByID(id uint) (web.UserResponse, error) {
 	}, nil
 }
 
-// UpdateUser validates the request and calls the repository to update the user
+// UpdateUser validates the request, hashes the password if provided, and calls the repository to update the user
 func (s *userService) UpdateUser(request web.UserUpdateRequest) (web.UserResponse, error) {
 	// Validate the request
 	if err := s.validator.ValidateStruct(request); err != nil {
@@ -104,7 +110,11 @@ func (s *userService) UpdateUser(request web.UserUpdateRequest) (web.UserRespons
 	// Update the user details
 	user.Username = request.Username
 	if request.Password != "" {
-		user.Password = request.Password // Make sure to hash the password if provided
+		hashedPassword, err := utils.HashPassword(request.Password) // Hash the password if provided
+		if err != nil {
+			return web.UserResponse{}, err
+		}
+		user.Password = hashedPassword
 	}
 
 	err = s.repo.UpdateUser(&user)
