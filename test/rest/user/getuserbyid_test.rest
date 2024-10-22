@@ -1,0 +1,2 @@
+### Get a user by ID
+GET http://localhost:8000/users/1
