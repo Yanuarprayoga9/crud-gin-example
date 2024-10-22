@@ -13,11 +13,43 @@ This is a sample Go application that uses Docker and PostgreSQL for data storage
 
 Create a `.env` file in the root of the project with the following variables:
 
-```env
+``` bash
 # Database configuration
-DB_USER=myuser           # Change to your desired username
-DB_PASSWORD=mypassword   # Change to your desired password
-DB_NAME=mydatabase       # Change to your desired database name
+DATABASE_URL="host=go_db user=postgres password=postgres dbname=postgres sslmode=disable"
+```
 
-# Optional: Port configuration
-DB_PORT=5324             # Change to your desired host port
+## How to Use
+
+### 1. Build the Docker containers
+
+To build the Go app and PostgreSQL containers, run:
+
+```bash
+make build
+```
+### 2. Start the PostgreSQL Database
+To start only the PostgreSQL container
+```bash
+make up-db
+```
+### 3. Start the Go Application
+To start only the Go app container:
+```bash
+make up-app
+```
+### 4. Start Both Go App and PostgreSQL
+To start both containers:
+```bash
+make up
+```
+### 5. Stop the Running Containers
+To stop the running containers without removing them: 
+```bash
+make stop
+```
+### 6. Stop and Remove the Containers, Networks, and Volumes
+To bring down all services and clean up the environment: 
+```bash
+make down
+```
+
