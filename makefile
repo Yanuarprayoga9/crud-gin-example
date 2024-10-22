@@ -46,17 +46,7 @@ restart:
 	$(DOCKER_COMPOSE) stop
 	$(DOCKER_COMPOSE) up -d
 
-# Show logs for all services
-.PHONY: logs
-logs:
-	$(DOCKER_COMPOSE) logs -f
-
-# Show logs for Go app service
-.PHONY: logs-app
-logs-app:
-	$(DOCKER_COMPOSE) logs -f $(GO_APP)
-
-# Show logs for database service
-.PHONY: logs-db
-logs-db:
-	$(DOCKER_COMPOSE) logs -f $(GO_DB)
+# Run all test go
+.PHONY: down
+down:
+	$(DOCKER_COMPOSE) down
