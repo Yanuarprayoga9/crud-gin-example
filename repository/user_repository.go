@@ -1,8 +1,10 @@
 package repository
 
 import (
-    "day1/model/domain"
-    "gorm.io/gorm"
+	"day1/model/domain"
+	"fmt"
+
+	"gorm.io/gorm"
 )
 
 // UserRepository interface defines methods for user repository
@@ -33,6 +35,10 @@ func (r *userRepository) CreateUser(user *domain.User) error {
 func (r *userRepository) GetAllUsers() ([]domain.User, error) {
     var users []domain.User
     err := r.db.Find(&users).Error
+    for _, v := range users {
+        fmt.Println(v.Username)
+        fmt.Println(v.Password)
+    }
     return users, err
 }
 
