@@ -18,15 +18,12 @@ func main() {
 	}
 	db := db.ConnectDb()
 
-	// Initialize repository, service, and handler
 	userRepo := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 
-	// Setup Gin router
 	r := gin.Default()
 
-	// Setup CORS middleware
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:5173"}, // Allow only from these origins
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},                   // Allow only specific HTTP methods
@@ -35,7 +32,6 @@ func main() {
 		AllowCredentials: true,                                                       // Allow cookies and other credentials
 		MaxAge:           12 * time.Hour,                                             // Cache preflight requests
 	}))
-	// Define routes
 	r.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"message": "ping",
@@ -49,6 +45,5 @@ func main() {
 	r.PUT("/users/:id", userHandler.UpdateUser)
 	r.DELETE("/users/:id", userHandler.DeleteUser)
 
-	// Start the server
 	r.Run(":8000")
 }

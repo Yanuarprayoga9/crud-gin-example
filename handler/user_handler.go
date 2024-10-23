@@ -10,17 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// UserHandler struct to handle HTTP requests
 type UserHandler struct {
 	service service.UserService
 }
 
-// NewUserHandler creates a new instance of UserHandler
 func NewUserHandler(service service.UserService) *UserHandler {
 	return &UserHandler{service: service}
 }
 
-// CreateUser handles POST /users to create a new user
 func (h *UserHandler) CreateUser(c *gin.Context) {
 	var request web.UserCreateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -37,7 +34,6 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	utils.SuccessResponse(c, "User created successfully", "user", user, http.StatusCreated)
 }
 
-// GetAllUsers handles GET /users to retrieve all users
 func (h *UserHandler) GetAllUsers(c *gin.Context) {
 	users, err := h.service.GetAllUsers()
 	if err != nil {
@@ -48,7 +44,6 @@ func (h *UserHandler) GetAllUsers(c *gin.Context) {
 	utils.SuccessResponse(c, "Users retrieved successfully", "users", users, http.StatusOK)
 }
 
-// GetUserByID handles GET /users/:id to retrieve a user by ID
 func (h *UserHandler) GetUserByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -65,7 +60,6 @@ func (h *UserHandler) GetUserByID(c *gin.Context) {
 	utils.SuccessResponse(c, "User found", "user", user, http.StatusOK)
 }
 
-// UpdateUser handles PUT /users/:id to update an existing user
 func (h *UserHandler) UpdateUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -79,7 +73,6 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	// Set the ID in the request struct
 	request.Id = id
 
 	updatedUser, err := h.service.UpdateUser(request)
@@ -91,7 +84,6 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 	utils.SuccessResponse(c, "User updated successfully", "user", updatedUser, http.StatusOK)
 }
 
-// DeleteUser handles DELETE /users/:id to delete a user
 func (h *UserHandler) DeleteUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

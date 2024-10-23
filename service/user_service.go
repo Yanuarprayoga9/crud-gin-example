@@ -8,7 +8,6 @@ import (
 	"errors"
 )
 
-// UserService interface defines methods for user service
 type UserService interface {
 	CreateUser(request web.UserCreateRequest) (web.UserResponse, error)
 	GetAllUsers() ([]web.UserResponse, error)
@@ -17,13 +16,11 @@ type UserService interface {
 	DeleteUser(id uint) error
 }
 
-// userService struct implements UserService interface
 type userService struct {
 	repo      repository.UserRepository
 	validator *utils.Validator
 }
 
-// NewUserService creates a new instance of userService
 func NewUserService(repo repository.UserRepository) UserService {
 	return &userService{
 		repo:      repo,
@@ -31,20 +28,16 @@ func NewUserService(repo repository.UserRepository) UserService {
 	}
 }
 
-// CreateUser validates the request, hashes the password, and calls the repository
 func (s *userService) CreateUser(request web.UserCreateRequest) (web.UserResponse, error) {
-	// Validate the request
 	if err := s.validator.ValidateStruct(request); err != nil {
 		return web.UserResponse{}, err
 	}
 
-	// Hash the password
 	hashedPassword, err := utils.HashPassword(request.Password)
 	if err != nil {
 		return web.UserResponse{}, err
 	}
 
-	// Transform and create the user
 	user := &domain.User{
 		Username: request.Username,
 		Password: hashedPassword, // Store the hashed password
@@ -55,7 +48,6 @@ func (s *userService) CreateUser(request web.UserCreateRequest) (web.UserRespons
 		return web.UserResponse{}, err
 	}
 
-	// Prepare the response
 	response := web.UserResponse{
 		Id:       int(user.ID),
 		Username: user.Username,
@@ -64,7 +56,6 @@ func (s *userService) CreateUser(request web.UserCreateRequest) (web.UserRespons
 	return response, nil
 }
 
-// GetAllUsers retrieves all users and returns them as UserResponse slices
 func (s *userService) GetAllUsers() ([]web.UserResponse, error) {
 	users, err := s.repo.GetAllUsers()
 	if err != nil {
@@ -82,7 +73,6 @@ func (s *userService) GetAllUsers() ([]web.UserResponse, error) {
 	return responses, nil
 }
 
-// GetUserByID retrieves a single user by ID
 func (s *userService) GetUserByID(id uint) (web.UserResponse, error) {
 	user, err := s.repo.GetUserByID(id)
 	if err != nil {
@@ -95,9 +85,7 @@ func (s *userService) GetUserByID(id uint) (web.UserResponse, error) {
 	}, nil
 }
 
-// UpdateUser validates the request, hashes the password if provided, and calls the repository to update the user
 func (s *userService) UpdateUser(request web.UserUpdateRequest) (web.UserResponse, error) {
-	// Validate the request
 	if err := s.validator.ValidateStruct(request); err != nil {
 		return web.UserResponse{}, err
 	}
@@ -107,7 +95,6 @@ func (s *userService) UpdateUser(request web.UserUpdateRequest) (web.UserRespons
 		return web.UserResponse{}, err
 	}
 
-	// Update the user details
 	user.Username = request.Username
 	if request.Password != "" {
 		hashedPassword, err := utils.HashPassword(request.Password) // Hash the password if provided
@@ -128,14 +115,11 @@ func (s *userService) UpdateUser(request web.UserUpdateRequest) (web.UserRespons
 	}, nil
 }
 
-// DeleteUser deletes a user by ID
 func (s *userService) DeleteUser(id uint) error {
-	// Check if user exists
 	_, err := s.repo.GetUserByID(id)
 	if err != nil {
 		return errors.New("user not found")
 	}
 
-	// Call the repository to delete the user
 	return s.repo.DeleteUser(id)
 }
