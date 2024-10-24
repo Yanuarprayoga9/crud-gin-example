@@ -12,7 +12,7 @@ func TestConnectDb(t *testing.T) {
 	dsn := "host=localhost user=postgres password=rahasia dbname=mydatabase sslmode=disable"
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Silent), // Silent to avoid log pollution during tests
+		Logger: logger.Default.LogMode(logger.Silent), 
 	})
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)

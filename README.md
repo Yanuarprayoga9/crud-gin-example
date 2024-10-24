@@ -53,3 +53,11 @@ To bring down all services and clean up the environment:
 make down
 ```
 
+## Run Migrations 
+first you have to hash atls sum 
+### 6. Stop and Remove the Containers, Networks, and Volumes
+To bring down all services and clean up the environment: 
+```bash
+make down
+```
+

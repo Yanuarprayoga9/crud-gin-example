@@ -1,52 +1,48 @@
-# Variables
 DOCKER_COMPOSE=docker compose
 GO_APP=go-app
 GO_DB=go_db
 
-# Build the Go app and database services
 .PHONY: build
 build:
 	$(DOCKER_COMPOSE) build
 
-# Run the database service
 .PHONY: up-db
 up-db:
 	$(DOCKER_COMPOSE) up -d $(GO_DB)
 
-# Run the Go app service
 .PHONY: up-app
 up-app:
 	$(DOCKER_COMPOSE) up -d $(GO_APP)
 
-# Run both services independently (not dependent on each other)
 .PHONY: up
 up:
 	$(DOCKER_COMPOSE) up -d
 
-# Stop and remove containers, networks, volumes for both services
 .PHONY: down
 down:
 	$(DOCKER_COMPOSE) down
 
-# Rebuild the Go app and database services
 .PHONY: rebuild
 rebuild:
 	$(DOCKER_COMPOSE) down
 	$(DOCKER_COMPOSE) build
 	$(DOCKER_COMPOSE) up -d
 
-# Stop the containers without removing them
 .PHONY: stop
 stop:
 	$(DOCKER_COMPOSE) stop
 
-# Restart containers independently
 .PHONY: restart
 restart:
 	$(DOCKER_COMPOSE) stop
 	$(DOCKER_COMPOSE) up -d
 
-# Run all test go
 .PHONY: down
 down:
 	$(DOCKER_COMPOSE) down
+
+.PHONY: up-migrate
+up-migrate:
+	docker-compose run atlas migrate apply --dir file:///migrations --url "postgres://postgres:postgres@go_db:5432/postgres?sslmode=disable"
+
+# docker-compose run atlas migrate hash

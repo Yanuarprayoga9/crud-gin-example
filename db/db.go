@@ -16,7 +16,6 @@ type Dbinstance struct {
 
 var DB Dbinstance
 
-// ConnectDb attempts to connect to the database with retry mechanism
 func ConnectDb() *gorm.DB {
 	dsn := os.Getenv("DATABASE_URL")
 	maxRetries := 5

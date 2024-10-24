@@ -11,6 +11,9 @@ services:
       - "8000:8000"
     depends_on:
       - go_db
+    networks:
+      - go-network
+
   go_db:
     container_name: go_db
     image: postgres
@@ -22,6 +25,27 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - go-network
 
-volumes:  
+  atlas:
+    container_name: atlas
+    image: arigaio/atlas
+    command: [
+      "migrate", "apply",
+      "--dir", "file:///migrations",
+      "--url", "postgres://postgres:postgres@go_db:5432/postgres?sslmode=disable"
+    ]
+    volumes:
+      - ./migrations:/migrations
+    depends_on:
+      - go_db
+    networks:
+      - go-network
+
+networks:
+  go-network:
+    driver: bridge
+
+volumes:
   pgdata: {}
